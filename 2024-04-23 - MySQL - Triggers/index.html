@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uso de Triggers no MySQL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Uso de Triggers no MySQL</h1>
+    <p>Aqui estão cinco situações em que o uso de triggers no MySQL pode ser interessante, juntamente com exemplos de códigos, explicações e razões para usar triggers:</p>
+
+    <h2>1. Auditoria de Dados:</h2>
+    <pre><code>CREATE TRIGGER audit_cliente
+AFTER INSERT ON clientes
+FOR EACH ROW
+BEGIN
+    INSERT INTO log_clientes (acao, cliente_id, data) 
+    VALUES ('inserção', NEW.id_cliente, NOW());
+END;</code></pre>
+    <p>Esta trigger registra automaticamente todas as inserções feitas na tabela "clientes" em uma tabela de log, fornecendo um rastreamento completo de quem fez quais alterações e quando.</p>
+
+    <h2>2. Validação de Dados:</h2>
+    <pre><code>CREATE TRIGGER validar_quantidade
+BEFORE INSERT ON pedidos
+FOR EACH ROW
+BEGIN
+    IF NEW.quantidade &lt; 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'A quantidade não pode ser negativa';
+    END IF;
+END;</code></pre>
+    <p>Esta trigger impede a inserção de pedidos com quantidades negativas, garantindo a integridade dos dados na tabela "pedidos".</p>
+
+    <h2>3. Atualização de Dados em Cascata:</h2>
+    <pre><code>CREATE TRIGGER atualizar_saldo
+AFTER INSERT ON transacoes
+FOR EACH ROW
+BEGIN
+    UPDATE contas 
+    SET saldo = saldo + NEW.valor 
+    WHERE id_conta = NEW.id_conta;
+END;</code></pre>
+    <p>Esta trigger garante que o saldo da conta seja atualizado automaticamente após uma transação ser registrada na tabela "transacoes", evitando inconsistências nos dados.</p>
+
+    <h2>4. Manutenção de Histórico:</h2>
+    <pre><code>CREATE TRIGGER arquivar_registro
+AFTER DELETE ON produtos
+FOR EACH ROW
+BEGIN
+    INSERT INTO produtos_arquivados (id_produto, nome, data_arquivamento) 
+    VALUES (OLD.id_produto, OLD.nome, NOW());
+END;</code></pre>
+    <p>Esta trigger move automaticamente registros excluídos da tabela "produtos" para uma tabela de arquivamento, preservando um histórico completo dos dados.</p>
+
+    <h2>5. Replicação de Dados:</h2>
+    <pre><code>CREATE TRIGGER replicar_dados
+AFTER INSERT ON tabela_local
+FOR EACH ROW
+BEGIN
+    INSERT INTO tabela_remota (campo1, campo2) 
+    VALUES (NEW.campo1, NEW.campo2);
+END;</code></pre>
+    <p>Esta trigger replica automaticamente inserções feitas na tabela "tabela_local" para uma tabela em um banco de dados remoto, mantendo os dois bancos de dados sincronizados.</p>
+
+    <h2>Por que usar triggers:</h2>
+    <ul>
+        <li><strong>Automatização:</strong> As triggers automatizam tarefas comuns de manipulação de dados, reduzindo a necessidade de intervenção manual e potencialmente evitando erros humanos.</li>
+        <li><strong>Integridade de Dados:</strong> Elas ajudam a garantir a integridade dos dados, aplicando regras de negócios e validações automaticamente.</li>
+        <li><strong>Auditoria e Rastreamento:</strong> Triggers podem ser usadas para registrar e rastrear alterações nos dados, fornecendo uma trilha de auditoria completa.</li>
+        <li><strong>Consistência de Dados:</strong> Ao atualizar automaticamente dados relacionados em cascata ou arquivar registros, as triggers ajudam a manter a consistência dos dados em todo o sistema.</li>
+    </ul>
+</body>
+</html>
