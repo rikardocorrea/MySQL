@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigger para Verificar Carro Alugado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-top: 30px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        code {
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trigger para Verificar Carro Alugado</h1>
+    <p>Aqui está uma trigger em MySQL para verificar se um carro já está alugado antes de permitir a locação:</p>
+
+    <pre><code>CREATE TRIGGER verificar_carro_alugado
+BEFORE INSERT ON locacoes
+FOR EACH ROW
+BEGIN
+    DECLARE carro_locado VARCHAR(3);
+
+    -- Obter o status do carro que está sendo alugado
+    SELECT LOCADO INTO carro_locado
+    FROM carros
+    WHERE CODIGOCARRO = NEW.CODIGOCARRO;
+
+    -- Verificar se o carro está alugado
+    IF carro_locado = 'SIM' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Não é possível alugar este carro, pois o mesmo já está locado.';
+    END IF;
+END;</code></pre>
+
+    <h2>Explicação:</h2>
+    <ul>
+        <li><strong>CREATE TRIGGER</strong>: Inicia a declaração da trigger.</li>
+        <li><strong>BEFORE INSERT ON locacoes</strong>: Especifica que a trigger será acionada antes de inserir uma nova linha na tabela "locacoes".</li>
+        <li><strong>FOR EACH ROW</strong>: Indica que a trigger será executada para cada linha afetada pela operação de inserção.</li>
+        <li><strong>BEGIN...END</strong>: Define o bloco de código que será executado quando a trigger for acionada.</li>
+        <li><strong>DECLARE carro_locado VARCHAR(3)</strong>: Declara uma variável local para armazenar o status do carro locado.</li>
+        <li><strong>SELECT LOCADO INTO carro_locado FROM carros WHERE CODIGOCARRO = NEW.CODIGOCARRO</strong>: Consulta o status do carro que está sendo alugado.</li>
+        <li><strong>IF carro_locado = 'SIM' THEN ... END IF</strong>: Verifica se o carro está locado. Se estiver, sinaliza um erro.</li>
+        <li><strong>SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Não é possível alugar este carro, pois o mesmo já está locado.'</strong>: Sinaliza um erro com uma mensagem personalizada indicando que o carro já está locado.</li>
+    </ul>
+</body>
+</html>
