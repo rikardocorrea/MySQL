@@ -1,0 +1,63 @@
+Exemplo 1:
+
+DELIMITER $
+CREATE PROCEDURE sp_listarPessoas()
+BEGIN
+      SELECT * FROM PESSOAS;
+END
+$ DELIMITER ;
+-----
+para executar = CALL sp_listarPessoas();
+
+--------------------------------------------------------------------
+Exemplo 2:
+
+DELIMITER $
+CREATE PROCEDURE sp_listarPessoasComOsCarros()
+BEGIN
+    SELECT PESSOAS.NOME, SEXO, TELEFONE, CARROS.NOME AS CARRO, ANO, COR
+    FROM PESSOAS
+    INNER JOIN CARROS ON PESSOAS.CODCARRO = CARROS.CÓDIGO;
+END
+$ DELIMITER ;
+
+---------------------------------------------------------------------
+Exemplo 3:
+
+DELIMITER $
+CREATE PROCEDURE sp_listarPessoasComOsCarrosPorNome(
+    IN nome VARCHAR(50)
+)
+BEGIN
+    SELECT PESSOAS.NOME, SEXO, TELEFONE, CARROS.NOME AS CARRO, ANO, COR
+    FROM PESSOAS
+    INNER JOIN CARROS ON PESSOAS.CODCARRO = CARROS.CÓDIGO
+    WHERE PESSOAS.NOME = nome;
+END $
+DELIMITER ;
+
+----
+Para chamar: 
+CALL sp_listarPessoasComOsCarrosPorNome('Hugo')
+
+
+-------------------------------------
+Exemplo 4:
+
+DELIMITER $
+CREATE PROCEDURE sp_inserirPessoa(
+      IN NOME VARCHAR(50),
+    IN SEXO VARCHAR(50),
+    IN DT_NASC DATE,
+    IN TELEFONE VARCHAR(50),
+    IN CODCARRO INT
+)
+BEGIN
+    INSERT INTO PESSOAS (NOME, SEXO, DT_NASC, TELEFONE, CODCARRO)
+    VALUES (NOME, SEXO, DT_NASC, TELEFONE, CODCARRO);
+END
+$ DELIMITER ;
+
+--------------
+
+CALL sp_inserirPessoa('Pica-pau', 'M', '1950-01-01', '(19) 98181-1213', 2); 
