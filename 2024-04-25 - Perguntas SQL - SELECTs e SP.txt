@@ -1,0 +1,15 @@
+1) Crie uma consulta que mostre todos os carros
+
+2) Crie uma consulta que mostre as locações que ocorreram com o carro código 1
+
+3) Crie uma consulta que mostre As locações que ocorreram com os carros à Gasolina e quem são os clientes e seus respectivos telefones
+
+4) Liste os carros que já foram alugados e hoje em dia estão INDISPONÍVEIS
+
+-----------------------------
+5) Crie uma stored Procedure para o exercício 2
+
+6) Crie uma stored Procedure para adicionar um novo carro.
+-----------------------------
+
+
